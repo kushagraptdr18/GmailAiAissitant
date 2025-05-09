@@ -9,10 +9,16 @@ const app = express();
 // Express backend example
 
 
+const cors = require("cors");
+
 app.use(cors({
-  origin: true, // or restrict it to your extension's origin if needed
+  origin: (origin, callback) => {
+    // Allow requests from any origin (for development), or restrict if needed
+    callback(null, true);
+  },
   methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
+  allowedHeaders: ["Content-Type"],
+  credentials: true // Optional: set to true if using cookies or auth headers
 }));
 
 app.use(express.json());
