@@ -11,14 +11,12 @@ const app = express();
 
 const cors = require("cors");
 
+const cors = require("cors");
+
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests from any origin (for development), or restrict if needed
-    callback(null, true);
-  },
+  origin: "*", // or restrict to Gmail or extension ID if needed
   methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true // Optional: set to true if using cookies or auth headers
+  allowedHeaders: ["Content-Type"]
 }));
 
 app.use(express.json());
