@@ -28,6 +28,9 @@ function extractSenderName(emailContent) {
 app.post("/generate-reply", async (req, res) => {
   const { emailContent, replyUserName } = req.body;
 
+  console.log(emailContent);
+  
+
   console.log(emailContent)
 
   console.log("Received email content:", emailContent);
