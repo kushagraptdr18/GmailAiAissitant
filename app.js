@@ -6,7 +6,15 @@ const axios = require("axios");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// Express backend example
+
+
+app.use(cors({
+  origin: true, // or restrict it to your extension's origin if needed
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
 app.use(express.json());
 
 const API_KEY = process.env.GEMINI_API_KEY;
