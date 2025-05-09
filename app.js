@@ -6,17 +6,13 @@ const axios = require("axios");
 dotenv.config();
 
 const app = express();
-// Express backend example
 
-
-const cors = require("cors");
-
-const cors = require("cors");
 
 app.use(cors({
   origin: "*", // or restrict to Gmail or extension ID if needed
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
+  methods: ["GET", "POST","OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true,
 }));
 
 app.use(express.json());
