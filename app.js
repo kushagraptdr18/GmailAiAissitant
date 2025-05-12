@@ -4,22 +4,18 @@ const dotenv = require("dotenv");
 const axios = require("axios");
 
 dotenv.config();
-
 const app = express();
 
-
 app.use(cors({
-  origin: "*", // or restrict to Gmail or extension ID if needed
-  methods: ["GET", "POST","OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true,
+  origin: "*", // Use "*" for development or specify exact origin like "http://localhost:5173"
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
 }));
 
 app.use(express.json());
 
 const API_KEY = process.env.GEMINI_API_KEY;
 
-// Utility: Time-based greeting
 function getTimeBasedGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
@@ -27,7 +23,6 @@ function getTimeBasedGreeting() {
   return "Good evening";
 }
 
-// Utility: Extract sender's name from email content (basic pattern)
 function extractSenderName(emailContent) {
   const match = emailContent.match(/(?:From|Regards|Best|Thanks|Sincerely),?\s*\n?([A-Z][a-z]+\s?[A-Z]?[a-z]*)/i);
   return match ? match[1].trim() : "Sir/Madam";
@@ -36,13 +31,9 @@ function extractSenderName(emailContent) {
 app.post("/generate-reply", async (req, res) => {
   const { emailContent, replyUserName } = req.body;
 
-  console.log(emailContent);
-  
-
-  console.log(emailContent)
-
-  console.log("Received email content:", emailContent);
-  console.log("Replying as:", replyUserName);
+  if (!emailContent || !replyUserName) {
+    return res.status(400).json({ error: "Missing emailContent or replyUserName" });
+  }
 
   const senderName = extractSenderName(emailContent);
   const greeting = `${getTimeBasedGreeting()} ${senderName},`;
@@ -68,7 +59,6 @@ Here is the received email content:
 ${emailContent}
 `;
 
-
     const payload = {
       contents: [
         {
@@ -82,15 +72,13 @@ ${emailContent}
     });
 
     const rawText = response.data.candidates[0]?.content?.parts[0]?.text || "No reply generated.";
-
     const [subjectLine, ...bodyLines] = rawText.split('\n\n');
     const reply = bodyLines.join('\n\n').replace(/^Email:\s*/i, '');
     const subject = subjectLine.replace(/^Subject:\s*/i, '');
-    console.log("Generated reply:", reply);
-    res.json({ reply, subject });
 
+    res.json({ reply, subject });
   } catch (err) {
-    console.error(err.response?.data || err.message);
+    console.error("Gemini API error:", err.response?.data || err.message);
     res.status(500).json({ error: "Gemini reply generation failed." });
   }
 });
